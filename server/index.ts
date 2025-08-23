@@ -28,6 +28,7 @@ export function createServer() {
   });
 
   app.get("/api/demo", handleDemo);
+  app.get("/api/test-supabase", testSupabaseConnection);
 
   // Blog API routes
   app.get("/api/blogs", getAllBlogs);
