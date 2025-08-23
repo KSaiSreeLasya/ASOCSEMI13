@@ -11,6 +11,7 @@ import {
   getBlogsByTag,
 } from "./routes/blogs";
 import { uploadImage, deleteImage, uploadMiddleware } from "./routes/upload";
+import { testSupabaseConnection } from "./routes/test-supabase";
 
 export function createServer() {
   const app = express();
@@ -27,6 +28,7 @@ export function createServer() {
   });
 
   app.get("/api/demo", handleDemo);
+  app.get("/api/test-supabase", testSupabaseConnection);
 
   // Blog API routes
   app.get("/api/blogs", getAllBlogs);
