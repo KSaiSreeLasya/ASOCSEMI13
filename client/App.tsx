@@ -24,6 +24,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import SecureAdminForms from "./pages/SecureAdminForms";
 import ResumeDownloads from "./pages/ResumeDownloads";
 import Blogs from "./pages/Blogs";
+import BlogPost from "./pages/BlogPost";
 
 const queryClient = new QueryClient();
 
