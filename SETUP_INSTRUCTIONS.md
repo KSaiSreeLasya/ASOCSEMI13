@@ -14,10 +14,12 @@ Your Supabase and Google Sheets credentials have been successfully configured:
 To complete the setup and see data in your admin dashboard, you need to create the database tables in Supabase.
 
 ### Option 1: Use Supabase MCP Integration (Recommended)
+
 1. [Connect to Supabase](#open-mcp-popover) through the MCP integrations
 2. Once connected, use the Supabase MCP tools to create the tables
 
 ### Option 2: Manual Setup via Supabase Dashboard
+
 1. Go to your [Supabase Dashboard](https://app.supabase.com/project/fqlvwhzkukqonvohhipc)
 2. Navigate to **SQL Editor**
 3. Copy and paste the SQL from `setup_supabase_tables.sql`
@@ -45,6 +47,7 @@ Once the tables are created and you submit some test forms, your admin dashboard
 ## 🔍 Verification
 
 You can verify the connection is working by:
+
 1. Checking the browser console for any Supabase connection errors
 2. Submitting a test form and checking if data appears in Supabase
 3. Viewing the admin dashboard for populated statistics
