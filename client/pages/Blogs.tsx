@@ -217,10 +217,12 @@ export default function Blogs() {
                       </Badge>
                     ))}
                   </div>
-                  <Button className="group">
-                    Read More
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Button>
+                  <Link to={`/blog/${featuredPost.id}`}>
+                    <Button className="group">
+                      Read More
+                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </Link>
                 </CardContent>
               </div>
             </Card>
@@ -273,10 +275,12 @@ export default function Blogs() {
                       <Clock className="w-4 h-4" />
                       {post.readTime}
                     </span>
-                    <Button variant="ghost" size="sm" className="group">
-                      Read More
-                      <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                    </Button>
+                    <Link to={`/blog/${post.id}`}>
+                      <Button variant="ghost" size="sm" className="group">
+                        Read More
+                        <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                    </Link>
                   </div>
                 </CardContent>
               </Card>

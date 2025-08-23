@@ -24,6 +24,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import SecureAdminForms from "./pages/SecureAdminForms";
 import ResumeDownloads from "./pages/ResumeDownloads";
 import Blogs from "./pages/Blogs";
+import BlogPost from "./pages/BlogPost";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/blogs" element={<Blogs />} />
+            <Route path="/blog/:id" element={<BlogPost />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/get-started" element={<GetStarted />} />
