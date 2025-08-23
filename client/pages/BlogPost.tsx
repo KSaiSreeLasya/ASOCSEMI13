@@ -36,7 +36,7 @@ export default function BlogPost() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await fetch(`/api/blogs/${postId}`);
       const result = await response.json();
 
@@ -55,29 +55,40 @@ export default function BlogPost() {
 
   const renderContent = (content: string) => {
     // Simple markdown-like parsing for basic formatting
-    const paragraphs = content.split('\n\n');
-    
+    const paragraphs = content.split("\n\n");
+
     return paragraphs.map((paragraph, index) => {
-      if (paragraph.startsWith('# ')) {
+      if (paragraph.startsWith("# ")) {
         return (
-          <h1 key={index} className="text-3xl font-bold text-foreground mb-6 mt-8">
+          <h1
+            key={index}
+            className="text-3xl font-bold text-foreground mb-6 mt-8"
+          >
             {paragraph.substring(2)}
           </h1>
         );
-      } else if (paragraph.startsWith('## ')) {
+      } else if (paragraph.startsWith("## ")) {
         return (
-          <h2 key={index} className="text-2xl font-semibold text-foreground mb-4 mt-6">
+          <h2
+            key={index}
+            className="text-2xl font-semibold text-foreground mb-4 mt-6"
+          >
             {paragraph.substring(3)}
           </h2>
         );
-      } else if (paragraph.startsWith('### ')) {
+      } else if (paragraph.startsWith("### ")) {
         return (
-          <h3 key={index} className="text-xl font-semibold text-foreground mb-3 mt-5">
+          <h3
+            key={index}
+            className="text-xl font-semibold text-foreground mb-3 mt-5"
+          >
             {paragraph.substring(4)}
           </h3>
         );
-      } else if (paragraph.startsWith('- ')) {
-        const listItems = paragraph.split('\n').filter(line => line.startsWith('- '));
+      } else if (paragraph.startsWith("- ")) {
+        const listItems = paragraph
+          .split("\n")
+          .filter((line) => line.startsWith("- "));
         return (
           <ul key={index} className="list-disc pl-6 mb-4 space-y-2">
             {listItems.map((item, itemIndex) => (
@@ -122,7 +133,8 @@ export default function BlogPost() {
               {error || "Blog Post Not Found"}
             </h1>
             <p className="text-muted-foreground mb-8">
-              The blog post you're looking for doesn't exist or has been removed.
+              The blog post you're looking for doesn't exist or has been
+              removed.
             </p>
             <Link to="/blogs">
               <Button className="group">
@@ -140,13 +152,16 @@ export default function BlogPost() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       {/* Hero Section */}
       <section className="pt-32 pb-16">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="max-w-4xl mx-auto">
             {/* Back button */}
-            <Link to="/blogs" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8">
+            <Link
+              to="/blogs"
+              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8"
+            >
               <ArrowLeft className="w-4 h-4" />
               Back to Blog
             </Link>
@@ -171,11 +186,13 @@ export default function BlogPost() {
               </div>
               <div className="flex items-center gap-2">
                 <Calendar className="w-5 h-5" />
-                <span>{new Date(blogPost.publishDate).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}</span>
+                <span>
+                  {new Date(blogPost.publishDate).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="w-5 h-5" />
@@ -187,7 +204,11 @@ export default function BlogPost() {
             {blogPost.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-8">
                 {blogPost.tags.map((tag, index) => (
-                  <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                  <Badge
+                    key={index}
+                    variant="secondary"
+                    className="flex items-center gap-1"
+                  >
                     <Tag className="w-3 h-3" />
                     {tag}
                   </Badge>
@@ -243,7 +264,8 @@ export default function BlogPost() {
               Ready to Get Started?
             </h2>
             <p className="text-muted-foreground mb-8">
-              Contact our team to learn more about our semiconductor design services.
+              Contact our team to learn more about our semiconductor design
+              services.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/contact">
