@@ -59,6 +59,8 @@ export default function Careers() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
+  const [jobOpenings, setJobOpenings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [resumeFormData, setResumeFormData] = useState({
     fullName: "",
     email: "",
