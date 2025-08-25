@@ -129,6 +129,60 @@ export const uploadImage: RequestHandler = (req, res) => {
   }
 };
 
+// Resume upload handler
+export const uploadResume: RequestHandler = (req, res) => {
+  try {
+    const file = req.file;
+
+    if (!file) {
+      console.warn("❌ Upload rejected: No valid resume file provided");
+      return res.status(400).json({
+        success: false,
+        error:
+          "No valid resume file provided. Please upload a PDF, DOC, or DOCX file.",
+      });
+    }
+
+    // Verify file is a resume format
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ];
+
+    if (!allowedTypes.includes(file.mimetype)) {
+      console.warn(`❌ Upload rejected: Invalid file type ${file.mimetype}`);
+      return res.status(400).json({
+        success: false,
+        error: "Only PDF, DOC, and DOCX files are allowed",
+      });
+    }
+
+    // Return the URL where the resume can be accessed
+    const resumeUrl = `/api/files/resume/${file.filename}`;
+
+    console.log(
+      `✅ Resume upload successful: ${file.originalname} -> ${file.filename}`,
+    );
+
+    res.json({
+      success: true,
+      data: {
+        url: resumeUrl,
+        filename: file.originalname,
+        size: file.size,
+        mimetype: file.mimetype,
+      },
+    });
+  } catch (error) {
+    console.error("❌ Error uploading resume:", error);
+    res.status(500).json({
+      success: false,
+      error: "Failed to upload resume",
+    });
+  }
+};
+
 // Delete uploaded image
 export const deleteImage: RequestHandler = (req, res) => {
   try {
