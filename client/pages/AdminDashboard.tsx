@@ -149,6 +149,8 @@ export default function AdminDashboard() {
   >(null);
   const [showBlogEditor, setShowBlogEditor] = useState(false);
   const [editingBlog, setEditingBlog] = useState<BlogPost | null>(null);
+  const [showJobEditor, setShowJobEditor] = useState(false);
+  const [editingJob, setEditingJob] = useState<JobPosting | null>(null);
 
   const ADMIN_PASSWORD = "admin2024";
 
