@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Header from "../components/Header";
 import BlogEditor from "../components/BlogEditor";
+import JobEditor from "../components/JobEditor";
 import GoogleSheetsWidget from "../components/GoogleSheetsWidget";
 import { useAuth } from "../contexts/AuthContext";
 import { supabase } from "../lib/supabase";
@@ -91,6 +92,26 @@ interface BlogPost {
   updated_at: string;
 }
 
+interface JobPosting {
+  id: string;
+  title: string;
+  department: string;
+  location: string;
+  type: "Full-time" | "Part-time" | "Contract" | "Internship";
+  description: string;
+  requirements: string;
+  responsibilities: string;
+  benefits: string;
+  salary_range?: string;
+  experience_level: string;
+  skills_required: string[];
+  status: "active" | "inactive" | "closed";
+  posted_date: string;
+  application_deadline?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export default function AdminDashboard() {
   const { user } = useAuth();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -107,11 +128,13 @@ export default function AdminDashboard() {
     NewsletterSubscriber[]
   >([]);
   const [actualResumeUploads, setActualResumeUploads] = useState<any[]>([]);
+  const [jobPostings, setJobPostings] = useState<JobPosting[]>([]);
   const [activeTab, setActiveTab] = useState<
     | "applications"
     | "contacts"
     | "resumes"
     | "blogs"
+    | "jobs"
     | "getstarted"
     | "newsletter"
   >("applications");
@@ -119,13 +142,15 @@ export default function AdminDashboard() {
   const [filter, setFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [selectedItem, setSelectedItem] = useState<
-    Application | Contact | ResumeUpload | BlogPost | null
+    Application | Contact | ResumeUpload | BlogPost | JobPosting | null
   >(null);
   const [modalType, setModalType] = useState<
-    "application" | "contact" | "resume" | "blog" | null
+    "application" | "contact" | "resume" | "blog" | "job" | null
   >(null);
   const [showBlogEditor, setShowBlogEditor] = useState(false);
   const [editingBlog, setEditingBlog] = useState<BlogPost | null>(null);
+  const [showJobEditor, setShowJobEditor] = useState(false);
+  const [editingJob, setEditingJob] = useState<JobPosting | null>(null);
 
   const ADMIN_PASSWORD = "admin2024";
 
@@ -286,6 +311,25 @@ export default function AdminDashboard() {
         console.error("❌ Blog posts HTTP error:", blogsResponse.status);
       }
 
+      // Fetch job postings from API
+      console.log("💼 Fetching job postings...");
+      const jobsResponse = await fetch("/api/jobs");
+      if (jobsResponse.ok) {
+        const jobsResult = await jobsResponse.json();
+        if (jobsResult.success) {
+          console.log(
+            "✅ Job postings data:",
+            jobsResult.data?.length || 0,
+            "records",
+          );
+          setJobPostings(jobsResult.data);
+        } else {
+          console.error("❌ Job postings API error:", jobsResult.error);
+        }
+      } else {
+        console.error("❌ Job postings HTTP error:", jobsResponse.status);
+      }
+
       console.log("🎉 Data fetch completed successfully!");
     } catch (error) {
       console.error("Error fetching data:", formatErrorMessage(error));
@@ -353,6 +397,14 @@ export default function AdminDashboard() {
       post.title.toLowerCase().includes(filter.toLowerCase()) ||
       post.author.toLowerCase().includes(filter.toLowerCase()) ||
       post.tags.some((tag) => tag.toLowerCase().includes(filter.toLowerCase())),
+  );
+
+  const filteredJobPostings = jobPostings.filter(
+    (job) =>
+      job.title.toLowerCase().includes(filter.toLowerCase()) ||
+      job.department.toLowerCase().includes(filter.toLowerCase()) ||
+      job.location.toLowerCase().includes(filter.toLowerCase()) ||
+      job.skills_required.some((skill) => skill.toLowerCase().includes(filter.toLowerCase())),
   );
 
   // Blog management functions
@@ -430,6 +482,106 @@ export default function AdminDashboard() {
   const startNewBlog = () => {
     setEditingBlog(null);
     setShowBlogEditor(true);
+  };
+
+  // Job management functions
+  const saveJobPosting = async (job: JobPosting) => {
+    try {
+      if (editingJob) {
+        // Update existing job
+        const response = await fetch(`/api/jobs/${job.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(job),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            setJobPostings((prev) =>
+              prev.map((j) => (j.id === job.id ? result.data : j)),
+            );
+          }
+        }
+      } else {
+        // Create new job
+        const response = await fetch("/api/jobs", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(job),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            setJobPostings((prev) => [...prev, result.data]);
+          }
+        }
+      }
+
+      setShowJobEditor(false);
+      setEditingJob(null);
+    } catch (error) {
+      console.error("Error saving job posting:", error);
+      alert("Error saving job posting. Please try again.");
+    }
+  };
+
+  const deleteJobPosting = async (id: string) => {
+    if (confirm("Are you sure you want to delete this job posting?")) {
+      try {
+        const response = await fetch(`/api/jobs/${id}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            setJobPostings((prev) => prev.filter((j) => j.id !== id));
+          }
+        }
+      } catch (error) {
+        console.error("Error deleting job posting:", error);
+        alert("Error deleting job posting. Please try again.");
+      }
+    }
+  };
+
+  const startEditJob = (job: JobPosting) => {
+    setEditingJob(job);
+    setShowJobEditor(true);
+  };
+
+  const startNewJob = () => {
+    setEditingJob(null);
+    setShowJobEditor(true);
+  };
+
+  const updateJobStatus = async (id: string, status: string) => {
+    try {
+      const response = await fetch(`/api/jobs/${id}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setJobPostings((prev) =>
+            prev.map((job) => (job.id === id ? { ...job, status } : job)),
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Error updating job status:", error);
+    }
   };
 
   // Export functions
@@ -570,14 +722,16 @@ export default function AdminDashboard() {
         return { data: filteredNewsletter, filename: "newsletter_subscribers" };
       case "blogs":
         return { data: filteredBlogPosts, filename: "blog_posts" };
+      case "jobs":
+        return { data: filteredJobPostings, filename: "job_postings" };
       default:
         return { data: [], filename: "export" };
     }
   };
 
   const openModal = (
-    item: Application | Contact | ResumeUpload | BlogPost,
-    type: "application" | "contact" | "resume" | "blog",
+    item: Application | Contact | ResumeUpload | BlogPost | JobPosting,
+    type: "application" | "contact" | "resume" | "blog" | "job",
   ) => {
     setSelectedItem(item);
     setModalType(type);
@@ -781,13 +935,13 @@ export default function AdminDashboard() {
             <div className="bg-card-bg border border-border-subtle rounded-xl p-6">
               <div className="flex items-center gap-4">
                 <div className="bg-yellow-500/10 p-3 rounded-lg">
-                  <Users className="w-6 h-6 text-yellow-500" />
+                  <Briefcase className="w-6 h-6 text-yellow-500" />
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-foreground">
-                    {blogPosts.filter((post) => post.featured).length}
+                    {jobPostings.filter((job) => job.status === "active").length}
                   </h3>
-                  <p className="text-foreground/70">Featured Posts</p>
+                  <p className="text-foreground/70">Active Job Postings</p>
                 </div>
               </div>
             </div>
@@ -868,6 +1022,16 @@ export default function AdminDashboard() {
                 }`}
               >
                 Blog Posts ({blogPosts.length})
+              </button>
+              <button
+                onClick={() => setActiveTab("jobs")}
+                className={`flex-1 py-4 px-6 text-center font-medium transition-colors ${
+                  activeTab === "jobs"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-foreground/70 hover:text-foreground"
+                }`}
+              >
+                Job Postings ({jobPostings.length})
               </button>
             </div>
           </div>
@@ -1423,6 +1587,163 @@ export default function AdminDashboard() {
                   )}
                 </div>
               </div>
+            ) : activeTab === "jobs" ? (
+              <div>
+                {/* Job Management Header */}
+                <div className="p-6 border-b border-border-subtle flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-foreground">
+                    Job Postings Management
+                  </h3>
+                  <button
+                    onClick={startNewJob}
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    New Job Posting
+                  </button>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="border-b border-border-subtle">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-foreground font-medium">
+                          Job Title
+                        </th>
+                        <th className="px-6 py-4 text-left text-foreground font-medium">
+                          Department
+                        </th>
+                        <th className="px-6 py-4 text-left text-foreground font-medium">
+                          Location
+                        </th>
+                        <th className="px-6 py-4 text-left text-foreground font-medium">
+                          Type
+                        </th>
+                        <th className="px-6 py-4 text-left text-foreground font-medium">
+                          Status
+                        </th>
+                        <th className="px-6 py-4 text-left text-foreground font-medium">
+                          Posted Date
+                        </th>
+                        <th className="px-6 py-4 text-left text-foreground font-medium">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredJobPostings.map((job) => (
+                        <tr
+                          key={job.id}
+                          className="border-b border-border-subtle/50 hover:bg-background/50"
+                        >
+                          <td className="px-6 py-4">
+                            <div>
+                              <div className="font-medium text-foreground">
+                                {job.title}
+                              </div>
+                              <div className="text-sm text-foreground/70 line-clamp-2">
+                                {job.description}
+                              </div>
+                              {job.skills_required.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                  {job.skills_required.slice(0, 3).map((skill, index) => (
+                                    <span
+                                      key={index}
+                                      className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded"
+                                    >
+                                      {skill}
+                                    </span>
+                                  ))}
+                                  {job.skills_required.length > 3 && (
+                                    <span className="text-xs text-muted-foreground">
+                                      +{job.skills_required.length - 3} more
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-foreground">
+                            {job.department}
+                          </td>
+                          <td className="px-6 py-4 text-foreground">
+                            {job.location}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                              {job.type}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <select
+                              value={job.status}
+                              onChange={(e) => updateJobStatus(job.id, e.target.value)}
+                              className={`px-2 py-1 text-xs rounded-full border-0 font-medium ${
+                                job.status === "active"
+                                  ? "bg-green-100 text-green-800"
+                                  : job.status === "inactive"
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : "bg-red-100 text-red-800"
+                              }`}
+                            >
+                              <option value="active">Active</option>
+                              <option value="inactive">Inactive</option>
+                              <option value="closed">Closed</option>
+                            </select>
+                          </td>
+                          <td className="px-6 py-4 text-foreground/70 text-sm">
+                            {new Date(job.posted_date).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => openModal(job, "job")}
+                                className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors"
+                                title="View Details"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => startEditJob(job)}
+                                className="p-2 bg-blue-500/10 text-blue-500 rounded-lg hover:bg-blue-500/20 transition-colors"
+                                title="Edit Job"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => deleteJobPosting(job.id)}
+                                className="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500/20 transition-colors"
+                                title="Delete Job"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+
+                  {filteredJobPostings.length === 0 && (
+                    <div className="p-12 text-center text-foreground/70">
+                      <Briefcase className="w-12 h-12 mx-auto mb-4 text-foreground/30" />
+                      <p className="text-lg font-medium mb-2">
+                        No job postings found
+                      </p>
+                      <p className="text-sm">
+                        Create your first job posting to get started
+                      </p>
+                      <button
+                        onClick={startNewJob}
+                        className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2 mx-auto"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Create Job Posting
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -1512,6 +1833,7 @@ export default function AdminDashboard() {
                 {modalType === "contact" && "Contact Message Details"}
                 {modalType === "resume" && "Resume Upload Details"}
                 {modalType === "blog" && "Blog Post Details"}
+                {modalType === "job" && "Job Posting Details"}
               </h2>
               <button
                 onClick={closeModal}
@@ -1845,6 +2167,162 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               )}
+
+              {modalType === "job" && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Job Title
+                      </label>
+                      <p className="text-foreground font-medium">
+                        {(selectedItem as JobPosting).title}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Department
+                      </label>
+                      <p className="text-foreground">
+                        {(selectedItem as JobPosting).department}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Location
+                      </label>
+                      <p className="text-foreground">
+                        {(selectedItem as JobPosting).location}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Job Type
+                      </label>
+                      <p className="text-foreground">
+                        {(selectedItem as JobPosting).type}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Status
+                      </label>
+                      <span
+                        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                          (selectedItem as JobPosting).status === "active"
+                            ? "bg-green-100 text-green-800"
+                            : (selectedItem as JobPosting).status === "inactive"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {(selectedItem as JobPosting).status}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Experience Level
+                      </label>
+                      <p className="text-foreground">
+                        {(selectedItem as JobPosting).experience_level || "Not specified"}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Salary Range
+                      </label>
+                      <p className="text-foreground">
+                        {(selectedItem as JobPosting).salary_range || "Not specified"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Posted Date
+                      </label>
+                      <p className="text-foreground">
+                        {new Date((selectedItem as JobPosting).posted_date).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Application Deadline
+                      </label>
+                      <p className="text-foreground">
+                        {(selectedItem as JobPosting).application_deadline
+                          ? new Date((selectedItem as JobPosting).application_deadline!).toLocaleDateString()
+                          : "No deadline specified"}
+                      </p>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-foreground/70">
+                      Skills Required
+                    </label>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {(selectedItem as JobPosting).skills_required.map((skill, index) => (
+                        <span
+                          key={index}
+                          className="px-2 py-1 bg-muted text-muted-foreground text-sm rounded"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-foreground/70">
+                      Job Description
+                    </label>
+                    <div className="mt-2 p-4 bg-background/50 rounded-lg">
+                      <p className="text-foreground whitespace-pre-wrap">
+                        {(selectedItem as JobPosting).description}
+                      </p>
+                    </div>
+                  </div>
+                  {(selectedItem as JobPosting).requirements && (
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Requirements
+                      </label>
+                      <div className="mt-2 p-4 bg-background/50 rounded-lg max-h-60 overflow-y-auto">
+                        <p className="text-foreground whitespace-pre-wrap">
+                          {(selectedItem as JobPosting).requirements}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {(selectedItem as JobPosting).responsibilities && (
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Responsibilities
+                      </label>
+                      <div className="mt-2 p-4 bg-background/50 rounded-lg max-h-60 overflow-y-auto">
+                        <p className="text-foreground whitespace-pre-wrap">
+                          {(selectedItem as JobPosting).responsibilities}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {(selectedItem as JobPosting).benefits && (
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Benefits & Perks
+                      </label>
+                      <div className="mt-2 p-4 bg-background/50 rounded-lg max-h-60 overflow-y-auto">
+                        <p className="text-foreground whitespace-pre-wrap">
+                          {(selectedItem as JobPosting).benefits}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="p-6 border-t border-border-subtle">
@@ -1873,6 +2351,19 @@ export default function AdminDashboard() {
             />
           </div>
         </div>
+      )}
+
+      {/* Job Editor Modal */}
+      {showJobEditor && (
+        <JobEditor
+          isOpen={showJobEditor}
+          onClose={() => {
+            setShowJobEditor(false);
+            setEditingJob(null);
+          }}
+          onSave={saveJobPosting}
+          editingJob={editingJob}
+        />
       )}
     </div>
   );

@@ -59,6 +59,8 @@ export default function Careers() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
+  const [jobOpenings, setJobOpenings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [resumeFormData, setResumeFormData] = useState({
     fullName: "",
     email: "",
@@ -77,7 +79,25 @@ export default function Careers() {
   useEffect(() => {
     document.documentElement.classList.add("dark");
     setIsVisible(true);
+    fetchJobOpenings();
   }, []);
+
+  const fetchJobOpenings = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/jobs?status=active");
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setJobOpenings(result.data);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching job openings:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleApplyClick = (job: any) => {
     setSelectedJob(job);
@@ -225,56 +245,6 @@ export default function Careers() {
     }
   };
 
-  const jobOpenings = [
-    {
-      title: "Senior VLSI Design Engineer",
-      department: "Engineering",
-      location: "Bangalore, India",
-      type: "Full-time",
-      description:
-        "Lead VLSI design projects for next-generation semiconductor solutions.",
-    },
-    {
-      title: "Design verification engineer",
-      department: "Semiconductors  Development",
-      location: "Hyderabad, India",
-      type: "Full-time",
-      description:
-        "Understanding of PG-Grid optimization, including identification of high vs low current density paths & layer/via optimization, Adaptive PDN experience",
-    },
-    {
-      title: "Hardware Verification Engineer",
-      department: "Verification",
-      location: "Chennai, India",
-      type: "Full-time",
-      description:
-        "Verify complex hardware designs using industry-standard methodologies.",
-    },
-    {
-      title: "STA Engineer",
-      department: "Semiconductors  Development",
-      location: "Mumbai, India",
-      type: "Full-time",
-      description:
-        "xperience of multiple power domain implementation with complex UPF/CPF definition requireds.",
-    },
-    {
-      title: "RTL Design Engineer",
-      department: "Infrastructure",
-      location: "Remote",
-      type: "Full-time",
-      description:
-        "Hands-on experience in Linting, CDC – analysis of reports, identify ways to fix the violations",
-    },
-    {
-      title: "DFT Engineer",
-      department: "Design",
-      location: "Pune, India",
-      type: "Full-time",
-      description:
-        "Proficient in Scan, specializing in ATPG and Pattern verification at Block and Full chip level..",
-    },
-  ];
 
   const benefits = [
     {
