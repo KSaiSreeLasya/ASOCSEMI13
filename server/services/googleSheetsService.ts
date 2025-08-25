@@ -201,6 +201,11 @@ class ServerGoogleSheetsService {
     message: string;
     created_at: string;
   }): Promise<boolean> {
+    if (!this.initialized) {
+      console.warn('📋 Google Sheets not configured. Skipping contact sync.');
+      return false;
+    }
+
     const values = [
       [
         new Date(contactData.created_at).toLocaleString(),
