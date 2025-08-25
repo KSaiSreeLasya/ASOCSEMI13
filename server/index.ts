@@ -55,6 +55,9 @@ export function createServer() {
   app.delete("/api/jobs/:id", deleteJob);
   app.patch("/api/jobs/:id/status", updateJobStatus);
 
+  // File download routes
+  app.get("/api/files/resume/:filename", downloadResume);
+
   // Upload API routes
   app.post("/api/upload/image", uploadMiddleware, uploadImage);
   app.delete("/api/upload/image", deleteImage);
