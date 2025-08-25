@@ -60,6 +60,7 @@ export function createServer() {
 
   // Upload API routes
   app.post("/api/upload/image", uploadMiddleware, uploadImage);
+  app.post("/api/upload/resume", resumeUploadMiddleware, uploadResume);
   app.delete("/api/upload/image", deleteImage);
 
   // Serve uploaded images
