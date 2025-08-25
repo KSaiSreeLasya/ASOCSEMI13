@@ -142,10 +142,10 @@ export default function AdminDashboard() {
   const [filter, setFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [selectedItem, setSelectedItem] = useState<
-    Application | Contact | ResumeUpload | BlogPost | null
+    Application | Contact | ResumeUpload | BlogPost | JobPosting | null
   >(null);
   const [modalType, setModalType] = useState<
-    "application" | "contact" | "resume" | "blog" | null
+    "application" | "contact" | "resume" | "blog" | "job" | null
   >(null);
   const [showBlogEditor, setShowBlogEditor] = useState(false);
   const [editingBlog, setEditingBlog] = useState<BlogPost | null>(null);
