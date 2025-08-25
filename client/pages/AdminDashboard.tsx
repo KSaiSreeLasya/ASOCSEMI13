@@ -476,6 +476,106 @@ export default function AdminDashboard() {
     setShowBlogEditor(true);
   };
 
+  // Job management functions
+  const saveJobPosting = async (job: JobPosting) => {
+    try {
+      if (editingJob) {
+        // Update existing job
+        const response = await fetch(`/api/jobs/${job.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(job),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            setJobPostings((prev) =>
+              prev.map((j) => (j.id === job.id ? result.data : j)),
+            );
+          }
+        }
+      } else {
+        // Create new job
+        const response = await fetch("/api/jobs", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(job),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            setJobPostings((prev) => [...prev, result.data]);
+          }
+        }
+      }
+
+      setShowJobEditor(false);
+      setEditingJob(null);
+    } catch (error) {
+      console.error("Error saving job posting:", error);
+      alert("Error saving job posting. Please try again.");
+    }
+  };
+
+  const deleteJobPosting = async (id: string) => {
+    if (confirm("Are you sure you want to delete this job posting?")) {
+      try {
+        const response = await fetch(`/api/jobs/${id}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            setJobPostings((prev) => prev.filter((j) => j.id !== id));
+          }
+        }
+      } catch (error) {
+        console.error("Error deleting job posting:", error);
+        alert("Error deleting job posting. Please try again.");
+      }
+    }
+  };
+
+  const startEditJob = (job: JobPosting) => {
+    setEditingJob(job);
+    setShowJobEditor(true);
+  };
+
+  const startNewJob = () => {
+    setEditingJob(null);
+    setShowJobEditor(true);
+  };
+
+  const updateJobStatus = async (id: string, status: string) => {
+    try {
+      const response = await fetch(`/api/jobs/${id}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setJobPostings((prev) =>
+            prev.map((job) => (job.id === id ? { ...job, status } : job)),
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Error updating job status:", error);
+    }
+  };
+
   // Export functions
   const exportToCSV = (data: any[], filename: string) => {
     if (data.length === 0) return;
