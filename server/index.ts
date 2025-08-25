@@ -21,6 +21,14 @@ import {
   updateJobStatus,
 } from "./routes/jobs";
 import { downloadResume } from "./routes/files";
+import {
+  syncContact,
+  syncJobApplication,
+  syncGetStartedRequest,
+  syncResumeUpload,
+  syncNewsletterSubscription,
+  getSyncStatus,
+} from "./routes/sync";
 
 export function createServer() {
   const app = express();
