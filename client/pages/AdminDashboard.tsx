@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Header from "../components/Header";
 import BlogEditor from "../components/BlogEditor";
+import JobEditor from "../components/JobEditor";
 import GoogleSheetsWidget from "../components/GoogleSheetsWidget";
 import { useAuth } from "../contexts/AuthContext";
 import { supabase } from "../lib/supabase";
