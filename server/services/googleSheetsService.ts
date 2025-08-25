@@ -41,12 +41,14 @@ class ServerGoogleSheetsService {
     try {
       // Check if service account file exists
       if (!fs.existsSync(config.serviceAccountPath)) {
-        console.warn('📋 Google Sheets service account file not found. Skipping Google Sheets integration.');
+        console.warn('📋 Google Sheets service account file not found. Google Sheets integration disabled.');
+        this.initialized = false;
         return;
       }
 
       if (!config.spreadsheetId) {
-        console.warn('📋 GOOGLE_SHEETS_ID environment variable not set. Skipping Google Sheets integration.');
+        console.warn('📋 GOOGLE_SHEETS_ID environment variable not set. Google Sheets integration disabled.');
+        this.initialized = false;
         return;
       }
 
@@ -61,7 +63,7 @@ class ServerGoogleSheetsService {
       this.initialized = true;
 
       console.log('✅ Google Sheets service initialized with service account authentication');
-      
+
       // Initialize sheets with headers if they don't exist
       await this.initializeSheets();
     } catch (error) {
