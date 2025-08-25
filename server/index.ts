@@ -20,6 +20,7 @@ import {
   deleteJob,
   updateJobStatus,
 } from "./routes/jobs";
+import { downloadResume } from "./routes/files";
 
 export function createServer() {
   const app = express();
