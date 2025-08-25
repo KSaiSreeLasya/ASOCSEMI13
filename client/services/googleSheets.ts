@@ -29,60 +29,46 @@ const config: GoogleSheetsConfig = {
 };
 
 class GoogleSheetsService {
-  private baseUrl = "https://sheets.googleapis.com/v4/spreadsheets";
+  private baseUrl = "/api/sync";
 
-  private isConfigured(): boolean {
-    return !!(config.spreadsheetId && config.apiKey);
-  }
-
-  private async appendToSheet(
-    sheetName: string,
-    values: any[][],
-  ): Promise<boolean> {
-    if (!this.isConfigured()) {
-      console.warn("Google Sheets not configured. Skipping sync.");
+  private async isConfigured(): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.baseUrl}/status`);
+      if (response.ok) {
+        const result = await response.json();
+        return result.success && result.data.configured;
+      }
+      return false;
+    } catch (error) {
+      console.error("Error checking Google Sheets configuration:", error);
       return false;
     }
+  }
 
+  private async syncToServer(endpoint: string, data: any): Promise<boolean> {
     try {
-      const url = `${this.baseUrl}/${config.spreadsheetId}/values/${sheetName}:append`;
-
-      const response = await fetch(
-        `${url}?valueInputOption=RAW&key=${config.apiKey}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            values: values,
-          }),
+      const response = await fetch(`${this.baseUrl}/${endpoint}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify(data),
+      });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-
-        // Handle authentication error specifically
-        if (response.status === 401) {
-          console.warn(
-            "⚠️ Google Sheets API Key cannot write data. Read-only access available.",
-          );
-          console.warn(
-            "💡 For write access, configure OAuth2 or service account authentication.",
-          );
-          return false;
-        }
-
-        throw new Error(
-          `Google Sheets API error: ${response.status} - ${errorData?.error?.message || "Unknown error"}`,
-        );
+        throw new Error(`Sync failed: ${response.status}`);
       }
 
-      console.log(`✅ Successfully synced to Google Sheets: ${sheetName}`);
-      return true;
+      const result = await response.json();
+
+      if (result.success) {
+        console.log(`✅ Successfully synced to Google Sheets: ${endpoint}`);
+        return result.synced;
+      } else {
+        throw new Error(result.error || 'Sync failed');
+      }
     } catch (error) {
-      console.error("❌ Error syncing to Google Sheets:", error);
+      console.error(`❌ Error syncing to Google Sheets (${endpoint}):`, error);
       return false;
     }
   }
