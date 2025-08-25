@@ -65,6 +65,26 @@ export default function GoogleSheetsWidget({
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+        <div className="flex items-center gap-4">
+          <div className="bg-gray-100 p-3 rounded-lg">
+            <FileSpreadsheet className="w-6 h-6 text-gray-600" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+              Google Sheets Integration
+            </h3>
+            <p className="text-gray-700">
+              Checking configuration status...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!isConfigured) {
     return (
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
