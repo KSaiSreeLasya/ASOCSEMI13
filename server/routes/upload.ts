@@ -21,6 +21,22 @@ const storage = multer.diskStorage({
   },
 });
 
+// Configure multer for resume uploads
+const resumeStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const resumesDir = path.join(process.cwd(), "uploads", "resumes");
+    if (!fs.existsSync(resumesDir)) {
+      fs.mkdirSync(resumesDir, { recursive: true });
+    }
+    cb(null, resumesDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, `resume-${uniqueSuffix}${ext}`);
+  },
+});
+
 const upload = multer({
   storage: storage,
   limits: {
