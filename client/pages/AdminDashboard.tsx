@@ -311,6 +311,25 @@ export default function AdminDashboard() {
         console.error("❌ Blog posts HTTP error:", blogsResponse.status);
       }
 
+      // Fetch job postings from API
+      console.log("💼 Fetching job postings...");
+      const jobsResponse = await fetch("/api/jobs");
+      if (jobsResponse.ok) {
+        const jobsResult = await jobsResponse.json();
+        if (jobsResult.success) {
+          console.log(
+            "✅ Job postings data:",
+            jobsResult.data?.length || 0,
+            "records",
+          );
+          setJobPostings(jobsResult.data);
+        } else {
+          console.error("❌ Job postings API error:", jobsResult.error);
+        }
+      } else {
+        console.error("❌ Job postings HTTP error:", jobsResponse.status);
+      }
+
       console.log("🎉 Data fetch completed successfully!");
     } catch (error) {
       console.error("Error fetching data:", formatErrorMessage(error));
