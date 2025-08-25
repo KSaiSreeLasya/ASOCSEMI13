@@ -57,6 +57,30 @@ const upload = multer({
 
 export const uploadMiddleware = upload.single("image");
 
+const resumeUpload = multer({
+  storage: resumeStorage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept only PDF, DOC, and DOCX files
+    if (file && file.mimetype && (
+      file.mimetype === "application/pdf" ||
+      file.mimetype === "application/msword" ||
+      file.mimetype === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )) {
+      cb(null, true);
+    } else {
+      console.warn(
+        `❌ Rejected resume upload: ${file?.originalname || "unknown"} (${file?.mimetype || "no mimetype"})`,
+      );
+      cb(null, false); // Reject file without throwing error
+    }
+  },
+});
+
+export const resumeUploadMiddleware = resumeUpload.single("resume");
+
 // Image upload handler
 export const uploadImage: RequestHandler = (req, res) => {
   try {
