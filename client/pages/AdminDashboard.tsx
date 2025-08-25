@@ -128,11 +128,13 @@ export default function AdminDashboard() {
     NewsletterSubscriber[]
   >([]);
   const [actualResumeUploads, setActualResumeUploads] = useState<any[]>([]);
+  const [jobPostings, setJobPostings] = useState<JobPosting[]>([]);
   const [activeTab, setActiveTab] = useState<
     | "applications"
     | "contacts"
     | "resumes"
     | "blogs"
+    | "jobs"
     | "getstarted"
     | "newsletter"
   >("applications");
