@@ -31,6 +31,28 @@ export default function GoogleSheetsWidget({
     ? `https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit`
     : null;
 
+  useEffect(() => {
+    checkConfiguration();
+  }, []);
+
+  const checkConfiguration = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/sync/status');
+      if (response.ok) {
+        const result = await response.json();
+        setIsConfigured(result.success && result.data.configured);
+      } else {
+        setIsConfigured(false);
+      }
+    } catch (error) {
+      console.error('Error checking Google Sheets configuration:', error);
+      setIsConfigured(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const syncToGoogleSheets = async () => {
     // Note: API key only allows read access
     // Write operations require OAuth2 or service account
