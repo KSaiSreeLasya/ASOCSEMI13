@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ExternalLink,
   Download,
@@ -22,12 +22,8 @@ export default function GoogleSheetsWidget({
   totalResumes,
   totalNewsletter,
 }: GoogleSheetsWidgetProps) {
-  const [isConfigured, setIsConfigured] = useState(
-    !!(
-      import.meta.env.VITE_GOOGLE_SHEETS_ID &&
-      import.meta.env.VITE_GOOGLE_SHEETS_API_KEY
-    ),
-  );
+  const [isConfigured, setIsConfigured] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [lastSync, setLastSync] = useState<Date | null>(null);
 
   const spreadsheetId = import.meta.env.VITE_GOOGLE_SHEETS_ID;
