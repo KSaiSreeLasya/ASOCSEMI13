@@ -92,6 +92,26 @@ interface BlogPost {
   updated_at: string;
 }
 
+interface JobPosting {
+  id: string;
+  title: string;
+  department: string;
+  location: string;
+  type: "Full-time" | "Part-time" | "Contract" | "Internship";
+  description: string;
+  requirements: string;
+  responsibilities: string;
+  benefits: string;
+  salary_range?: string;
+  experience_level: string;
+  skills_required: string[];
+  status: "active" | "inactive" | "closed";
+  posted_date: string;
+  application_deadline?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export default function AdminDashboard() {
   const { user } = useAuth();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
