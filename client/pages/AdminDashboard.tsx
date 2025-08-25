@@ -1587,6 +1587,163 @@ export default function AdminDashboard() {
                   )}
                 </div>
               </div>
+            ) : activeTab === "jobs" ? (
+              <div>
+                {/* Job Management Header */}
+                <div className="p-6 border-b border-border-subtle flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-foreground">
+                    Job Postings Management
+                  </h3>
+                  <button
+                    onClick={startNewJob}
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    New Job Posting
+                  </button>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="border-b border-border-subtle">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-foreground font-medium">
+                          Job Title
+                        </th>
+                        <th className="px-6 py-4 text-left text-foreground font-medium">
+                          Department
+                        </th>
+                        <th className="px-6 py-4 text-left text-foreground font-medium">
+                          Location
+                        </th>
+                        <th className="px-6 py-4 text-left text-foreground font-medium">
+                          Type
+                        </th>
+                        <th className="px-6 py-4 text-left text-foreground font-medium">
+                          Status
+                        </th>
+                        <th className="px-6 py-4 text-left text-foreground font-medium">
+                          Posted Date
+                        </th>
+                        <th className="px-6 py-4 text-left text-foreground font-medium">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredJobPostings.map((job) => (
+                        <tr
+                          key={job.id}
+                          className="border-b border-border-subtle/50 hover:bg-background/50"
+                        >
+                          <td className="px-6 py-4">
+                            <div>
+                              <div className="font-medium text-foreground">
+                                {job.title}
+                              </div>
+                              <div className="text-sm text-foreground/70 line-clamp-2">
+                                {job.description}
+                              </div>
+                              {job.skills_required.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                  {job.skills_required.slice(0, 3).map((skill, index) => (
+                                    <span
+                                      key={index}
+                                      className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded"
+                                    >
+                                      {skill}
+                                    </span>
+                                  ))}
+                                  {job.skills_required.length > 3 && (
+                                    <span className="text-xs text-muted-foreground">
+                                      +{job.skills_required.length - 3} more
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-foreground">
+                            {job.department}
+                          </td>
+                          <td className="px-6 py-4 text-foreground">
+                            {job.location}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                              {job.type}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <select
+                              value={job.status}
+                              onChange={(e) => updateJobStatus(job.id, e.target.value)}
+                              className={`px-2 py-1 text-xs rounded-full border-0 font-medium ${
+                                job.status === "active"
+                                  ? "bg-green-100 text-green-800"
+                                  : job.status === "inactive"
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : "bg-red-100 text-red-800"
+                              }`}
+                            >
+                              <option value="active">Active</option>
+                              <option value="inactive">Inactive</option>
+                              <option value="closed">Closed</option>
+                            </select>
+                          </td>
+                          <td className="px-6 py-4 text-foreground/70 text-sm">
+                            {new Date(job.posted_date).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => openModal(job, "job")}
+                                className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors"
+                                title="View Details"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => startEditJob(job)}
+                                className="p-2 bg-blue-500/10 text-blue-500 rounded-lg hover:bg-blue-500/20 transition-colors"
+                                title="Edit Job"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => deleteJobPosting(job.id)}
+                                className="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500/20 transition-colors"
+                                title="Delete Job"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+
+                  {filteredJobPostings.length === 0 && (
+                    <div className="p-12 text-center text-foreground/70">
+                      <Briefcase className="w-12 h-12 mx-auto mb-4 text-foreground/30" />
+                      <p className="text-lg font-medium mb-2">
+                        No job postings found
+                      </p>
+                      <p className="text-sm">
+                        Create your first job posting to get started
+                      </p>
+                      <button
+                        onClick={startNewJob}
+                        className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2 mx-auto"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Create Job Posting
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
