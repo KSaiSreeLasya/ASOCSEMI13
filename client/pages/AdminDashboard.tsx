@@ -2167,6 +2167,162 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               )}
+
+              {modalType === "job" && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Job Title
+                      </label>
+                      <p className="text-foreground font-medium">
+                        {(selectedItem as JobPosting).title}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Department
+                      </label>
+                      <p className="text-foreground">
+                        {(selectedItem as JobPosting).department}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Location
+                      </label>
+                      <p className="text-foreground">
+                        {(selectedItem as JobPosting).location}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Job Type
+                      </label>
+                      <p className="text-foreground">
+                        {(selectedItem as JobPosting).type}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Status
+                      </label>
+                      <span
+                        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                          (selectedItem as JobPosting).status === "active"
+                            ? "bg-green-100 text-green-800"
+                            : (selectedItem as JobPosting).status === "inactive"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {(selectedItem as JobPosting).status}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Experience Level
+                      </label>
+                      <p className="text-foreground">
+                        {(selectedItem as JobPosting).experience_level || "Not specified"}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Salary Range
+                      </label>
+                      <p className="text-foreground">
+                        {(selectedItem as JobPosting).salary_range || "Not specified"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Posted Date
+                      </label>
+                      <p className="text-foreground">
+                        {new Date((selectedItem as JobPosting).posted_date).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Application Deadline
+                      </label>
+                      <p className="text-foreground">
+                        {(selectedItem as JobPosting).application_deadline
+                          ? new Date((selectedItem as JobPosting).application_deadline!).toLocaleDateString()
+                          : "No deadline specified"}
+                      </p>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-foreground/70">
+                      Skills Required
+                    </label>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {(selectedItem as JobPosting).skills_required.map((skill, index) => (
+                        <span
+                          key={index}
+                          className="px-2 py-1 bg-muted text-muted-foreground text-sm rounded"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-foreground/70">
+                      Job Description
+                    </label>
+                    <div className="mt-2 p-4 bg-background/50 rounded-lg">
+                      <p className="text-foreground whitespace-pre-wrap">
+                        {(selectedItem as JobPosting).description}
+                      </p>
+                    </div>
+                  </div>
+                  {(selectedItem as JobPosting).requirements && (
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Requirements
+                      </label>
+                      <div className="mt-2 p-4 bg-background/50 rounded-lg max-h-60 overflow-y-auto">
+                        <p className="text-foreground whitespace-pre-wrap">
+                          {(selectedItem as JobPosting).requirements}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {(selectedItem as JobPosting).responsibilities && (
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Responsibilities
+                      </label>
+                      <div className="mt-2 p-4 bg-background/50 rounded-lg max-h-60 overflow-y-auto">
+                        <p className="text-foreground whitespace-pre-wrap">
+                          {(selectedItem as JobPosting).responsibilities}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {(selectedItem as JobPosting).benefits && (
+                    <div>
+                      <label className="text-sm font-medium text-foreground/70">
+                        Benefits & Perks
+                      </label>
+                      <div className="mt-2 p-4 bg-background/50 rounded-lg max-h-60 overflow-y-auto">
+                        <p className="text-foreground whitespace-pre-wrap">
+                          {(selectedItem as JobPosting).benefits}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="p-6 border-t border-border-subtle">
