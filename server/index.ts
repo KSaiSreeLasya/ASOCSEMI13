@@ -12,6 +12,14 @@ import {
 } from "./routes/blogs";
 import { uploadImage, deleteImage, uploadMiddleware } from "./routes/upload";
 import { testSupabaseConnection } from "./routes/test-supabase";
+import {
+  getAllJobs,
+  getJobById,
+  createJob,
+  updateJob,
+  deleteJob,
+  updateJobStatus,
+} from "./routes/jobs";
 
 export function createServer() {
   const app = express();
