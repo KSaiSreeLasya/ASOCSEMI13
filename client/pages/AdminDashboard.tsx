@@ -399,6 +399,14 @@ export default function AdminDashboard() {
       post.tags.some((tag) => tag.toLowerCase().includes(filter.toLowerCase())),
   );
 
+  const filteredJobPostings = jobPostings.filter(
+    (job) =>
+      job.title.toLowerCase().includes(filter.toLowerCase()) ||
+      job.department.toLowerCase().includes(filter.toLowerCase()) ||
+      job.location.toLowerCase().includes(filter.toLowerCase()) ||
+      job.skills_required.some((skill) => skill.toLowerCase().includes(filter.toLowerCase())),
+  );
+
   // Blog management functions
   const saveBlogPost = async (post: BlogPost) => {
     try {
