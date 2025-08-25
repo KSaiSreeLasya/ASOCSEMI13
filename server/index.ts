@@ -46,6 +46,14 @@ export function createServer() {
   app.delete("/api/blogs/:id", deleteBlog);
   app.get("/api/blogs/tag/:tag", getBlogsByTag);
 
+  // Job posting API routes
+  app.get("/api/jobs", getAllJobs);
+  app.get("/api/jobs/:id", getJobById);
+  app.post("/api/jobs", createJob);
+  app.put("/api/jobs/:id", updateJob);
+  app.delete("/api/jobs/:id", deleteJob);
+  app.patch("/api/jobs/:id/status", updateJobStatus);
+
   // Upload API routes
   app.post("/api/upload/image", uploadMiddleware, uploadImage);
   app.delete("/api/upload/image", deleteImage);
