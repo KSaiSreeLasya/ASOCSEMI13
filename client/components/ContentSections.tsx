@@ -189,7 +189,7 @@ export default function ContentSections() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
               {[
                 { number: "4", label: "Years Experience", suffix: "+" },
-                { number: "3", label: "Team Members", suffix: "" },
+                { number: "50+", label: "Team Members", suffix: "" },
                 { number: "99", label: "Success Rate", suffix: "%" },
                 { number: "24", label: "Support Hours", suffix: "/7" },
               ].map((stat, index) => (
