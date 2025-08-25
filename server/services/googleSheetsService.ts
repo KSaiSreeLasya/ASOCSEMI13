@@ -231,6 +231,11 @@ class ServerGoogleSheetsService {
     status: string;
     created_at: string;
   }): Promise<boolean> {
+    if (!this.initialized) {
+      console.warn('📋 Google Sheets not configured. Skipping job application sync.');
+      return false;
+    }
+
     const values = [
       [
         new Date(applicationData.created_at).toLocaleString(),
@@ -258,6 +263,11 @@ class ServerGoogleSheetsService {
     message?: string;
     created_at: string;
   }): Promise<boolean> {
+    if (!this.initialized) {
+      console.warn('📋 Google Sheets not configured. Skipping get started request sync.');
+      return false;
+    }
+
     const values = [
       [
         new Date(requestData.created_at).toLocaleString(),
@@ -288,6 +298,11 @@ class ServerGoogleSheetsService {
     resume_url?: string;
     created_at: string;
   }): Promise<boolean> {
+    if (!this.initialized) {
+      console.warn('📋 Google Sheets not configured. Skipping resume upload sync.');
+      return false;
+    }
+
     const values = [
       [
         new Date(resumeData.created_at).toLocaleString(),
@@ -312,6 +327,11 @@ class ServerGoogleSheetsService {
     email: string;
     subscribed_at: string;
   }): Promise<boolean> {
+    if (!this.initialized) {
+      console.warn('📋 Google Sheets not configured. Skipping newsletter subscription sync.');
+      return false;
+    }
+
     const values = [
       [
         new Date(subscriptionData.subscribed_at).toLocaleString(),
