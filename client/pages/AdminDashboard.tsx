@@ -1833,6 +1833,7 @@ export default function AdminDashboard() {
                 {modalType === "contact" && "Contact Message Details"}
                 {modalType === "resume" && "Resume Upload Details"}
                 {modalType === "blog" && "Blog Post Details"}
+                {modalType === "job" && "Job Posting Details"}
               </h2>
               <button
                 onClick={closeModal}
