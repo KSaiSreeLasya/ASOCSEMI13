@@ -2352,6 +2352,19 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
+
+      {/* Job Editor Modal */}
+      {showJobEditor && (
+        <JobEditor
+          isOpen={showJobEditor}
+          onClose={() => {
+            setShowJobEditor(false);
+            setEditingJob(null);
+          }}
+          onSave={saveJobPosting}
+          editingJob={editingJob}
+        />
+      )}
     </div>
   );
 }
