@@ -54,35 +54,29 @@ export default function ApplicationModal({
 
   const uploadResume = async (file: File): Promise<string | null> => {
     try {
-      // Check if storage bucket exists first
-      const { data: buckets } = await supabase.storage.listBuckets();
-      const resumeBucket = buckets?.find((bucket) => bucket.name === "resumes");
+      const formData = new FormData();
+      formData.append('resume', file);
 
-      if (!resumeBucket) {
-        console.warn("Resumes bucket not found. Creating a placeholder URL.");
-        // Return a placeholder URL when bucket doesn't exist
-        return `placeholder://resume-${Date.now()}-${file.name}`;
+      const response = await fetch('/api/upload/resume', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.status}`);
       }
 
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-      const filePath = `resumes/${fileName}`;
+      const result = await response.json();
 
-      const { error: uploadError } = await supabase.storage
-        .from("resumes")
-        .upload(filePath, file);
-
-      if (uploadError) {
-        throw uploadError;
+      if (result.success) {
+        console.log(`✅ Resume uploaded successfully: ${result.data.url}`);
+        return result.data.url;
+      } else {
+        throw new Error(result.error || 'Upload failed');
       }
-
-      const { data } = supabase.storage.from("resumes").getPublicUrl(filePath);
-
-      return data.publicUrl;
     } catch (error) {
-      console.error("Error uploading file:", error);
-      // Instead of throwing, return a placeholder URL to allow form submission
-      return `placeholder://resume-${Date.now()}-${file.name}`;
+      console.error("Error uploading resume file:", error);
+      throw error;
     }
   };
 
