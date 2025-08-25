@@ -79,7 +79,25 @@ export default function Careers() {
   useEffect(() => {
     document.documentElement.classList.add("dark");
     setIsVisible(true);
+    fetchJobOpenings();
   }, []);
+
+  const fetchJobOpenings = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/jobs?status=active");
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setJobOpenings(result.data);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching job openings:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleApplyClick = (job: any) => {
     setSelectedJob(job);
