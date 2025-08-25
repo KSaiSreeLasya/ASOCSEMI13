@@ -935,13 +935,13 @@ export default function AdminDashboard() {
             <div className="bg-card-bg border border-border-subtle rounded-xl p-6">
               <div className="flex items-center gap-4">
                 <div className="bg-yellow-500/10 p-3 rounded-lg">
-                  <Users className="w-6 h-6 text-yellow-500" />
+                  <Briefcase className="w-6 h-6 text-yellow-500" />
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-foreground">
-                    {blogPosts.filter((post) => post.featured).length}
+                    {jobPostings.filter((job) => job.status === "active").length}
                   </h3>
-                  <p className="text-foreground/70">Featured Posts</p>
+                  <p className="text-foreground/70">Active Job Postings</p>
                 </div>
               </div>
             </div>
