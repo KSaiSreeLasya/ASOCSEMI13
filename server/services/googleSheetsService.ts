@@ -1,7 +1,7 @@
-import { GoogleAuth } from 'google-auth-library';
-import { sheets_v4, google } from 'googleapis';
-import path from 'path';
-import fs from 'fs';
+import { GoogleAuth } from "google-auth-library";
+import { sheets_v4, google } from "googleapis";
+import path from "path";
+import fs from "fs";
 
 interface GoogleSheetsConfig {
   spreadsheetId: string;
@@ -17,14 +17,18 @@ interface GoogleSheetsConfig {
 
 // Google Sheets configuration
 const config: GoogleSheetsConfig = {
-  spreadsheetId: process.env.GOOGLE_SHEETS_ID || '',
-  serviceAccountPath: path.join(process.cwd(), 'config', 'my-sheets-api-469908-f83e08f8ac49.json'),
+  spreadsheetId: process.env.GOOGLE_SHEETS_ID || "",
+  serviceAccountPath: path.join(
+    process.cwd(),
+    "config",
+    "my-sheets-api-469908-f83e08f8ac49.json",
+  ),
   sheetNames: {
-    contacts: 'Contacts',
-    jobApplications: 'Job Applications', 
-    getStartedRequests: 'Get Started Requests',
-    resumeUploads: 'Resume Uploads',
-    newsletter: 'Newsletter Subscribers',
+    contacts: "Contacts",
+    jobApplications: "Job Applications",
+    getStartedRequests: "Get Started Requests",
+    resumeUploads: "Resume Uploads",
+    newsletter: "Newsletter Subscribers",
   },
 };
 
@@ -41,13 +45,17 @@ class ServerGoogleSheetsService {
     try {
       // Check if service account file exists
       if (!fs.existsSync(config.serviceAccountPath)) {
-        console.warn('📋 Google Sheets service account file not found. Google Sheets integration disabled.');
+        console.warn(
+          "📋 Google Sheets service account file not found. Google Sheets integration disabled.",
+        );
         this.initialized = false;
         return;
       }
 
       if (!config.spreadsheetId) {
-        console.warn('📋 GOOGLE_SHEETS_ID environment variable not set. Google Sheets integration disabled.');
+        console.warn(
+          "📋 GOOGLE_SHEETS_ID environment variable not set. Google Sheets integration disabled.",
+        );
         this.initialized = false;
         return;
       }
@@ -55,19 +63,21 @@ class ServerGoogleSheetsService {
       // Initialize auth with service account
       this.auth = new GoogleAuth({
         keyFile: config.serviceAccountPath,
-        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+        scopes: ["https://www.googleapis.com/auth/spreadsheets"],
       });
 
       // Initialize sheets API
-      this.sheets = google.sheets({ version: 'v4', auth: this.auth });
+      this.sheets = google.sheets({ version: "v4", auth: this.auth });
       this.initialized = true;
 
-      console.log('✅ Google Sheets service initialized with service account authentication');
+      console.log(
+        "✅ Google Sheets service initialized with service account authentication",
+      );
 
       // Initialize sheets with headers if they don't exist
       await this.initializeSheets();
     } catch (error) {
-      console.error('❌ Failed to initialize Google Sheets service:', error);
+      console.error("❌ Failed to initialize Google Sheets service:", error);
       this.initialized = false;
     }
   }
@@ -80,31 +90,63 @@ class ServerGoogleSheetsService {
       const sheetsToInit = [
         {
           name: config.sheetNames.contacts,
-          headers: ['Date', 'Name', 'Email', 'Phone', 'Company', 'Message']
+          headers: ["Date", "Name", "Email", "Phone", "Company", "Message"],
         },
         {
           name: config.sheetNames.jobApplications,
-          headers: ['Date', 'Full Name', 'Email', 'Phone', 'Position', 'Experience', 'Cover Letter', 'Resume URL', 'Status']
+          headers: [
+            "Date",
+            "Full Name",
+            "Email",
+            "Phone",
+            "Position",
+            "Experience",
+            "Cover Letter",
+            "Resume URL",
+            "Status",
+          ],
         },
         {
           name: config.sheetNames.getStartedRequests,
-          headers: ['Date', 'First Name', 'Last Name', 'Email', 'Company', 'Phone', 'Job Title', 'Message']
+          headers: [
+            "Date",
+            "First Name",
+            "Last Name",
+            "Email",
+            "Company",
+            "Phone",
+            "Job Title",
+            "Message",
+          ],
         },
         {
           name: config.sheetNames.resumeUploads,
-          headers: ['Date', 'Full Name', 'Email', 'Phone', 'Location', 'Position Interested', 'Experience Level', 'Skills', 'Cover Letter', 'LinkedIn URL', 'Portfolio URL', 'Resume URL']
+          headers: [
+            "Date",
+            "Full Name",
+            "Email",
+            "Phone",
+            "Location",
+            "Position Interested",
+            "Experience Level",
+            "Skills",
+            "Cover Letter",
+            "LinkedIn URL",
+            "Portfolio URL",
+            "Resume URL",
+          ],
         },
         {
           name: config.sheetNames.newsletter,
-          headers: ['Date', 'Email']
-        }
+          headers: ["Date", "Email"],
+        },
       ];
 
       for (const sheetInfo of sheetsToInit) {
         await this.ensureSheetExists(sheetInfo.name, sheetInfo.headers);
       }
     } catch (error) {
-      console.error('❌ Error initializing sheets:', error);
+      console.error("❌ Error initializing sheets:", error);
     }
   }
 
@@ -123,7 +165,7 @@ class ServerGoogleSheetsService {
         await this.sheets.spreadsheets.values.update({
           spreadsheetId: config.spreadsheetId,
           range: `${sheetName}!A1`,
-          valueInputOption: 'RAW',
+          valueInputOption: "RAW",
           requestBody: {
             values: [headers],
           },
@@ -132,7 +174,10 @@ class ServerGoogleSheetsService {
       }
     } catch (error: any) {
       // If sheet doesn't exist, create it
-      if (error.code === 400 && error.message.includes('Unable to parse range')) {
+      if (
+        error.code === 400 &&
+        error.message.includes("Unable to parse range")
+      ) {
         try {
           await this.sheets.spreadsheets.batchUpdate({
             spreadsheetId: config.spreadsheetId,
@@ -153,7 +198,7 @@ class ServerGoogleSheetsService {
           await this.sheets.spreadsheets.values.update({
             spreadsheetId: config.spreadsheetId,
             range: `${sheetName}!A1`,
-            valueInputOption: 'RAW',
+            valueInputOption: "RAW",
             requestBody: {
               values: [headers],
             },
@@ -169,9 +214,12 @@ class ServerGoogleSheetsService {
     }
   }
 
-  private async appendToSheet(sheetName: string, values: any[][]): Promise<boolean> {
+  private async appendToSheet(
+    sheetName: string,
+    values: any[][],
+  ): Promise<boolean> {
     if (!this.initialized || !this.sheets) {
-      console.warn('📋 Google Sheets service not initialized. Skipping sync.');
+      console.warn("📋 Google Sheets service not initialized. Skipping sync.");
       return false;
     }
 
@@ -179,7 +227,7 @@ class ServerGoogleSheetsService {
       await this.sheets.spreadsheets.values.append({
         spreadsheetId: config.spreadsheetId,
         range: `${sheetName}!A:Z`,
-        valueInputOption: 'RAW',
+        valueInputOption: "RAW",
         requestBody: {
           values: values,
         },
@@ -202,7 +250,7 @@ class ServerGoogleSheetsService {
     created_at: string;
   }): Promise<boolean> {
     if (!this.initialized) {
-      console.warn('📋 Google Sheets not configured. Skipping contact sync.');
+      console.warn("📋 Google Sheets not configured. Skipping contact sync.");
       return false;
     }
 
@@ -211,8 +259,8 @@ class ServerGoogleSheetsService {
         new Date(contactData.created_at).toLocaleString(),
         contactData.name,
         contactData.email,
-        contactData.phone || '',
-        contactData.company || '',
+        contactData.phone || "",
+        contactData.company || "",
         contactData.message,
       ],
     ];
@@ -232,7 +280,9 @@ class ServerGoogleSheetsService {
     created_at: string;
   }): Promise<boolean> {
     if (!this.initialized) {
-      console.warn('📋 Google Sheets not configured. Skipping job application sync.');
+      console.warn(
+        "📋 Google Sheets not configured. Skipping job application sync.",
+      );
       return false;
     }
 
@@ -244,8 +294,8 @@ class ServerGoogleSheetsService {
         applicationData.phone,
         applicationData.position,
         applicationData.experience,
-        applicationData.cover_letter || '',
-        applicationData.resume_url || '',
+        applicationData.cover_letter || "",
+        applicationData.resume_url || "",
         applicationData.status,
       ],
     ];
@@ -264,7 +314,9 @@ class ServerGoogleSheetsService {
     created_at: string;
   }): Promise<boolean> {
     if (!this.initialized) {
-      console.warn('📋 Google Sheets not configured. Skipping get started request sync.');
+      console.warn(
+        "📋 Google Sheets not configured. Skipping get started request sync.",
+      );
       return false;
     }
 
@@ -274,10 +326,10 @@ class ServerGoogleSheetsService {
         requestData.first_name,
         requestData.last_name,
         requestData.email,
-        requestData.company || '',
-        requestData.phone || '',
-        requestData.job_title || '',
-        requestData.message || '',
+        requestData.company || "",
+        requestData.phone || "",
+        requestData.job_title || "",
+        requestData.message || "",
       ],
     ];
 
@@ -299,7 +351,9 @@ class ServerGoogleSheetsService {
     created_at: string;
   }): Promise<boolean> {
     if (!this.initialized) {
-      console.warn('📋 Google Sheets not configured. Skipping resume upload sync.');
+      console.warn(
+        "📋 Google Sheets not configured. Skipping resume upload sync.",
+      );
       return false;
     }
 
@@ -308,15 +362,15 @@ class ServerGoogleSheetsService {
         new Date(resumeData.created_at).toLocaleString(),
         resumeData.full_name,
         resumeData.email,
-        resumeData.phone || '',
-        resumeData.location || '',
-        resumeData.position_interested || '',
-        resumeData.experience_level || '',
-        resumeData.skills || '',
-        resumeData.cover_letter || '',
-        resumeData.linkedin_url || '',
-        resumeData.portfolio_url || '',
-        resumeData.resume_url || '',
+        resumeData.phone || "",
+        resumeData.location || "",
+        resumeData.position_interested || "",
+        resumeData.experience_level || "",
+        resumeData.skills || "",
+        resumeData.cover_letter || "",
+        resumeData.linkedin_url || "",
+        resumeData.portfolio_url || "",
+        resumeData.resume_url || "",
       ],
     ];
 
@@ -328,7 +382,9 @@ class ServerGoogleSheetsService {
     subscribed_at: string;
   }): Promise<boolean> {
     if (!this.initialized) {
-      console.warn('📋 Google Sheets not configured. Skipping newsletter subscription sync.');
+      console.warn(
+        "📋 Google Sheets not configured. Skipping newsletter subscription sync.",
+      );
       return false;
     }
 

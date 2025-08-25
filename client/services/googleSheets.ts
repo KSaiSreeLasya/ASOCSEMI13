@@ -65,7 +65,7 @@ class GoogleSheetsService {
         console.log(`✅ Successfully synced to Google Sheets: ${endpoint}`);
         return result.synced;
       } else {
-        throw new Error(result.error || 'Sync failed');
+        throw new Error(result.error || "Sync failed");
       }
     } catch (error) {
       console.error(`❌ Error syncing to Google Sheets (${endpoint}):`, error);
@@ -81,7 +81,7 @@ class GoogleSheetsService {
     message: string;
     created_at: string;
   }): Promise<boolean> {
-    return this.syncToServer('contact', contactData);
+    return this.syncToServer("contact", contactData);
   }
 
   async syncJobApplication(applicationData: {
@@ -95,7 +95,7 @@ class GoogleSheetsService {
     status: string;
     created_at: string;
   }): Promise<boolean> {
-    return this.syncToServer('job-application', applicationData);
+    return this.syncToServer("job-application", applicationData);
   }
 
   async syncGetStartedRequest(requestData: {
@@ -108,7 +108,7 @@ class GoogleSheetsService {
     message?: string;
     created_at: string;
   }): Promise<boolean> {
-    return this.syncToServer('get-started', requestData);
+    return this.syncToServer("get-started", requestData);
   }
 
   async syncResumeUpload(resumeData: {
@@ -125,14 +125,14 @@ class GoogleSheetsService {
     resume_url?: string;
     created_at: string;
   }): Promise<boolean> {
-    return this.syncToServer('resume-upload', resumeData);
+    return this.syncToServer("resume-upload", resumeData);
   }
 
   async syncNewsletterSubscription(subscriptionData: {
     email: string;
     subscribed_at: string;
   }): Promise<boolean> {
-    return this.syncToServer('newsletter', subscriptionData);
+    return this.syncToServer("newsletter", subscriptionData);
   }
 
   async initializeSheets(): Promise<void> {

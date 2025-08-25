@@ -12,7 +12,7 @@ if (!fs.existsSync(uploadsDir)) {
 export const downloadResume: RequestHandler = (req, res) => {
   try {
     const { filename } = req.params;
-    
+
     if (!filename) {
       return res.status(400).json({
         success: false,
@@ -32,16 +32,16 @@ export const downloadResume: RequestHandler = (req, res) => {
 
     // Set headers for file download
     const stat = fs.statSync(filePath);
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Length', stat.size);
-    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Length", stat.size);
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
 
     // Stream the file
     const fileStream = fs.createReadStream(filePath);
     fileStream.pipe(res);
 
-    fileStream.on('error', (error) => {
-      console.error('Error streaming file:', error);
+    fileStream.on("error", (error) => {
+      console.error("Error streaming file:", error);
       if (!res.headersSent) {
         res.status(500).json({
           success: false,
@@ -49,7 +49,6 @@ export const downloadResume: RequestHandler = (req, res) => {
         });
       }
     });
-
   } catch (error) {
     console.error("Error downloading resume:", error);
     res.status(500).json({
@@ -65,17 +64,20 @@ export const generateResumeUrl = (filename: string): string => {
 };
 
 // Save resume file from upload
-export const saveResumeFile = async (file: Express.Multer.File, applicantName: string): Promise<string> => {
+export const saveResumeFile = async (
+  file: Express.Multer.File,
+  applicantName: string,
+): Promise<string> => {
   try {
-    const fileExt = path.extname(file.originalname) || '.pdf';
-    const sanitizedName = applicantName.replace(/[^a-zA-Z0-9]/g, '_');
+    const fileExt = path.extname(file.originalname) || ".pdf";
+    const sanitizedName = applicantName.replace(/[^a-zA-Z0-9]/g, "_");
     const timestamp = Date.now();
     const filename = `${sanitizedName}_${timestamp}${fileExt}`;
     const filePath = path.join(uploadsDir, filename);
 
     // Copy uploaded file to resumes directory
     await fs.promises.copyFile(file.path, filePath);
-    
+
     // Clean up temp file
     try {
       await fs.promises.unlink(file.path);

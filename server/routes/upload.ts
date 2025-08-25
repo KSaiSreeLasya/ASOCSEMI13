@@ -64,11 +64,14 @@ const resumeUpload = multer({
   },
   fileFilter: (req, file, cb) => {
     // Accept only PDF, DOC, and DOCX files
-    if (file && file.mimetype && (
-      file.mimetype === "application/pdf" ||
-      file.mimetype === "application/msword" ||
-      file.mimetype === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    )) {
+    if (
+      file &&
+      file.mimetype &&
+      (file.mimetype === "application/pdf" ||
+        file.mimetype === "application/msword" ||
+        file.mimetype ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+    ) {
       cb(null, true);
     } else {
       console.warn(
@@ -147,7 +150,7 @@ export const uploadResume: RequestHandler = (req, res) => {
     const allowedTypes = [
       "application/pdf",
       "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ];
 
     if (!allowedTypes.includes(file.mimetype)) {

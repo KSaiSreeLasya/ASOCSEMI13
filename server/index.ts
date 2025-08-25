@@ -10,7 +10,13 @@ import {
   deleteBlog,
   getBlogsByTag,
 } from "./routes/blogs";
-import { uploadImage, deleteImage, uploadMiddleware, uploadResume, resumeUploadMiddleware } from "./routes/upload";
+import {
+  uploadImage,
+  deleteImage,
+  uploadMiddleware,
+  uploadResume,
+  resumeUploadMiddleware,
+} from "./routes/upload";
 import { testSupabaseConnection } from "./routes/test-supabase";
 import {
   getAllJobs,

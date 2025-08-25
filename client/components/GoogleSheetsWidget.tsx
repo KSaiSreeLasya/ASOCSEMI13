@@ -38,7 +38,7 @@ export default function GoogleSheetsWidget({
   const checkConfiguration = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('/api/sync/status');
+      const response = await fetch("/api/sync/status");
       if (response.ok) {
         const result = await response.json();
         setIsConfigured(result.success && result.data.configured);
@@ -46,7 +46,7 @@ export default function GoogleSheetsWidget({
         setIsConfigured(false);
       }
     } catch (error) {
-      console.error('Error checking Google Sheets configuration:', error);
+      console.error("Error checking Google Sheets configuration:", error);
       setIsConfigured(false);
     } finally {
       setIsLoading(false);
@@ -76,9 +76,7 @@ export default function GoogleSheetsWidget({
             <h3 className="text-lg font-semibold text-gray-800 mb-2">
               Google Sheets Integration
             </h3>
-            <p className="text-gray-700">
-              Checking configuration status...
-            </p>
+            <p className="text-gray-700">Checking configuration status...</p>
           </div>
         </div>
       </div>

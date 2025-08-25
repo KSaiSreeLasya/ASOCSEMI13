@@ -25,7 +25,9 @@ export const syncContact: RequestHandler = async (req, res) => {
     res.json({
       success: true,
       synced: success,
-      message: success ? "Contact synced to Google Sheets" : "Sync attempted but may have failed",
+      message: success
+        ? "Contact synced to Google Sheets"
+        : "Sync attempted but may have failed",
     });
   } catch (error) {
     console.error("Error syncing contact:", error);
@@ -73,7 +75,9 @@ export const syncJobApplication: RequestHandler = async (req, res) => {
     res.json({
       success: true,
       synced: success,
-      message: success ? "Job application synced to Google Sheets" : "Sync attempted but may have failed",
+      message: success
+        ? "Job application synced to Google Sheets"
+        : "Sync attempted but may have failed",
     });
   } catch (error) {
     console.error("Error syncing job application:", error);
@@ -119,7 +123,9 @@ export const syncGetStartedRequest: RequestHandler = async (req, res) => {
     res.json({
       success: true,
       synced: success,
-      message: success ? "Get started request synced to Google Sheets" : "Sync attempted but may have failed",
+      message: success
+        ? "Get started request synced to Google Sheets"
+        : "Sync attempted but may have failed",
     });
   } catch (error) {
     console.error("Error syncing get started request:", error);
@@ -173,7 +179,9 @@ export const syncResumeUpload: RequestHandler = async (req, res) => {
     res.json({
       success: true,
       synced: success,
-      message: success ? "Resume upload synced to Google Sheets" : "Sync attempted but may have failed",
+      message: success
+        ? "Resume upload synced to Google Sheets"
+        : "Sync attempted but may have failed",
     });
   } catch (error) {
     console.error("Error syncing resume upload:", error);
@@ -204,7 +212,9 @@ export const syncNewsletterSubscription: RequestHandler = async (req, res) => {
     res.json({
       success: true,
       synced: success,
-      message: success ? "Newsletter subscription synced to Google Sheets" : "Sync attempted but may have failed",
+      message: success
+        ? "Newsletter subscription synced to Google Sheets"
+        : "Sync attempted but may have failed",
     });
   } catch (error) {
     console.error("Error syncing newsletter subscription:", error);
@@ -219,12 +229,12 @@ export const syncNewsletterSubscription: RequestHandler = async (req, res) => {
 export const getSyncStatus: RequestHandler = async (req, res) => {
   try {
     const isConfigured = serverGoogleSheetsService.isConfigured();
-    
+
     res.json({
       success: true,
       data: {
         configured: isConfigured,
-        message: isConfigured 
+        message: isConfigured
           ? "Google Sheets integration is configured and ready"
           : "Google Sheets integration is not configured. Check service account file and spreadsheet ID.",
       },

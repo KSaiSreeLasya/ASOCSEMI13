@@ -55,10 +55,10 @@ export default function ApplicationModal({
   const uploadResume = async (file: File): Promise<string | null> => {
     try {
       const formData = new FormData();
-      formData.append('resume', file);
+      formData.append("resume", file);
 
-      const response = await fetch('/api/upload/resume', {
-        method: 'POST',
+      const response = await fetch("/api/upload/resume", {
+        method: "POST",
         body: formData,
       });
 
@@ -72,7 +72,7 @@ export default function ApplicationModal({
         console.log(`✅ Resume uploaded successfully: ${result.data.url}`);
         return result.data.url;
       } else {
-        throw new Error(result.error || 'Upload failed');
+        throw new Error(result.error || "Upload failed");
       }
     } catch (error) {
       console.error("Error uploading resume file:", error);
