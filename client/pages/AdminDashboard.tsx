@@ -722,6 +722,8 @@ export default function AdminDashboard() {
         return { data: filteredNewsletter, filename: "newsletter_subscribers" };
       case "blogs":
         return { data: filteredBlogPosts, filename: "blog_posts" };
+      case "jobs":
+        return { data: filteredJobPostings, filename: "job_postings" };
       default:
         return { data: [], filename: "export" };
     }
