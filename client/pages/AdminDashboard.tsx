@@ -1023,6 +1023,16 @@ export default function AdminDashboard() {
               >
                 Blog Posts ({blogPosts.length})
               </button>
+              <button
+                onClick={() => setActiveTab("jobs")}
+                className={`flex-1 py-4 px-6 text-center font-medium transition-colors ${
+                  activeTab === "jobs"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-foreground/70 hover:text-foreground"
+                }`}
+              >
+                Job Postings ({jobPostings.length})
+              </button>
             </div>
           </div>
 
