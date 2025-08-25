@@ -730,8 +730,8 @@ export default function AdminDashboard() {
   };
 
   const openModal = (
-    item: Application | Contact | ResumeUpload | BlogPost,
-    type: "application" | "contact" | "resume" | "blog",
+    item: Application | Contact | ResumeUpload | BlogPost | JobPosting,
+    type: "application" | "contact" | "resume" | "blog" | "job",
   ) => {
     setSelectedItem(item);
     setModalType(type);
