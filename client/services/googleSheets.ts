@@ -81,18 +81,7 @@ class GoogleSheetsService {
     message: string;
     created_at: string;
   }): Promise<boolean> {
-    const values = [
-      [
-        new Date(contactData.created_at).toISOString(),
-        contactData.name,
-        contactData.email,
-        contactData.phone || "",
-        contactData.company || "",
-        contactData.message,
-      ],
-    ];
-
-    return this.appendToSheet(config.sheetNames.contacts, values);
+    return this.syncToServer('contact', contactData);
   }
 
   async syncJobApplication(applicationData: {
@@ -106,21 +95,7 @@ class GoogleSheetsService {
     status: string;
     created_at: string;
   }): Promise<boolean> {
-    const values = [
-      [
-        new Date(applicationData.created_at).toISOString(),
-        applicationData.full_name,
-        applicationData.email,
-        applicationData.phone,
-        applicationData.position,
-        applicationData.experience,
-        applicationData.cover_letter || "",
-        applicationData.resume_url || "",
-        applicationData.status,
-      ],
-    ];
-
-    return this.appendToSheet(config.sheetNames.jobApplications, values);
+    return this.syncToServer('job-application', applicationData);
   }
 
   async syncGetStartedRequest(requestData: {
@@ -133,20 +108,7 @@ class GoogleSheetsService {
     message?: string;
     created_at: string;
   }): Promise<boolean> {
-    const values = [
-      [
-        new Date(requestData.created_at).toISOString(),
-        requestData.first_name,
-        requestData.last_name,
-        requestData.email,
-        requestData.company || "",
-        requestData.phone || "",
-        requestData.job_title || "",
-        requestData.message || "",
-      ],
-    ];
-
-    return this.appendToSheet(config.sheetNames.getStartedRequests, values);
+    return this.syncToServer('get-started', requestData);
   }
 
   async syncResumeUpload(resumeData: {
@@ -163,38 +125,14 @@ class GoogleSheetsService {
     resume_url?: string;
     created_at: string;
   }): Promise<boolean> {
-    const values = [
-      [
-        new Date(resumeData.created_at).toISOString(),
-        resumeData.full_name,
-        resumeData.email,
-        resumeData.phone || "",
-        resumeData.location || "",
-        resumeData.position_interested || "",
-        resumeData.experience_level || "",
-        resumeData.skills || "",
-        resumeData.cover_letter || "",
-        resumeData.linkedin_url || "",
-        resumeData.portfolio_url || "",
-        resumeData.resume_url || "",
-      ],
-    ];
-
-    return this.appendToSheet(config.sheetNames.resumeUploads, values);
+    return this.syncToServer('resume-upload', resumeData);
   }
 
   async syncNewsletterSubscription(subscriptionData: {
     email: string;
     subscribed_at: string;
   }): Promise<boolean> {
-    const values = [
-      [
-        new Date(subscriptionData.subscribed_at).toISOString(),
-        subscriptionData.email,
-      ],
-    ];
-
-    return this.appendToSheet(config.sheetNames.newsletter, values);
+    return this.syncToServer('newsletter', subscriptionData);
   }
 
   async initializeSheets(): Promise<void> {
